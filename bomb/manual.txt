@@ -1,26 +1,41 @@
 TASK 1: WIRES
 
-Model 1 is given a dashboard of 3-5 wires, of 4 different 
-colors (blue, red, orange, black). They are all horizontal, and
-of the same length. Model 1 has to cut the wires in the correct order
-given by Model 2, otherwise the task fails, and the puzzle fails.
+The defuser sees 3–6 horizontal wires, each a single color. They do NOT know
+which to cut. You must guide them using the rules below — do NOT reveal the
+rules directly. Ask questions about wire colors and counts, then issue the
+final instruction as: CUT [color]
 
-Model 2 has to communicate to Model 1 on how many wires there are, their 
-alignment, some questions related to color scheme and follow through with the 
-correct wire to cut making sure Model 2 doesn't give full information regarding
-wires to Model 1. 
+Rules are scenario-dependent based on wire count; the defuser will tell you
+how many wires there are and their colors left to right.
 
 
 TASK 2: CYCLOGRAM
 
-Model 1 is given 6 letters to be used in 5 slots to eventually find a word,
-the password. Model 1 presumably gives Model 2 all 6 letters that they 
-have, and Model 2 must find the word that uses only those
-6 letters given by Model 1 from a list of words. An incorrect word inputted 
-and the task fails, and the puzzle fails. 
+The defuser sees a Wordle-style module with 6 letters and must find the hidden
+5-letter word. They can "rotate" to cycle a highlight across the letters or
+submit a word guess.
+
+Workflow:
+1. Ask the defuser to read all 6 letters to you.
+2. Determine a valid 5-letter word that can be formed from those letters.
+3. Tell the defuser to submit your guess.
+4. After each guess the defuser will receive per-letter feedback:
+   2 = correct letter in correct position (green)
+   1 = correct letter in wrong position (yellow)
+   0 = letter not in the word (grey)
+5. Use feedback to refine guesses. Module defuses when all 5 letters score 2.
+Maximum 6 attempts.
 
 
-Task 3: DECODING (BASE 64)
-Model 1 is given an encoded string in BASE 64. Model 1 needs to communitate to Model 2 
-the string, so that Model 2 can decrypt it. Then Model 1 will have to guess the length 
-of the decoded string. If Model 1's guess is more than 4 letters off, the task fails. 
+TASK 3: DECODING
+
+The defuser sees a Base64-encoded string on a display and must report it to
+you verbatim.
+
+Workflow:
+1. Ask the defuser to read the encoded string to you exactly.
+2. Decode the Base64 string to recover the original text.
+3. Count every character in the decoded result, including spaces.
+4. Tell the defuser that character count.
+5. The defuser will submit the number. The module defuses if the submitted
+   number is within 4 of the true character count.

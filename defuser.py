@@ -2,6 +2,9 @@ import litellm
 import json
 from bomb.bomb import Bomb
 
+litellm.suppress_debug_info = True
+litellm.set_verbose = False
+
 LABEL_W = 12
 
 TOOLS = [
