@@ -9,12 +9,13 @@ from rich.align import Align
 
 console = Console()
 
-def print_panel(role, content):
+def print_panel(role, content, model: str = ""):
     text = content or ""
+    label = f"({model}) " if model else ""
     if role == "defuser":
-        console.print(Panel(text, title="[bold red] DEFUSER[/bold red]", border_style="red"))
+        console.print(Panel(text, title=f"[bold red]{label}DEFUSER[/bold red]", border_style="red"))
     else:
-        console.print(Panel(text, title="[bold blue] TECHNICIAN[/bold blue]", border_style="blue"))
+        console.print(Panel(text, title=f"[bold blue]{label}TECHNICIAN[/bold blue]", border_style="blue"))
 
 def print_bomb(bomb):
     table = Table(title="BOMB", border_style="yellow", show_lines=True)
