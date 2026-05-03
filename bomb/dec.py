@@ -3,12 +3,26 @@ import random
 from .module import Module
 
 PHRASES = [
-    "BOMB DEFUSAL",
-    "KEEP TALKING",
-    "NOBODY EXPLODES",
-    "TOP SECRET",
-    "DANGER ZONE",
-    "RED WIRE",
+    "apple",
+    "banana",
+    "chaos",
+    "dolphin",
+    "elephant",
+    "fire",
+    "galaxy",
+    "hammer",
+    "ice",
+    "jacket",
+    "kangaroo",
+    "lemon",
+    "mountain",
+    "nebula",
+    "ocean",
+    "panda",
+    "quartz",
+    "rainbow",
+    "star",
+    "tune",
 ]
 
 
