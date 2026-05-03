@@ -60,8 +60,8 @@ def take_turn(messages: list, bomb: Bomb, model: str) -> str | None:
 
             else:
                 resp = f"Error: unknown function '{function_name}'"
-            print_panel("technician", f"Called tool '{function_name}' with args {tc.function.arguments}.")
-            print_panel("tool response", resp)
+            print_panel("technician_tool", f"{function_name}({tc.function.arguments})")
+            print_panel("technician_sees", resp)
 
             messages.append({
                 "tool_call_id": tc.id,
