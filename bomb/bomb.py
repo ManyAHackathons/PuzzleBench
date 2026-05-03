@@ -1,13 +1,12 @@
 from typing import List
 from .module import Module
 from .wires import Wires
-from .cyclo import WordleCyclo
+from .cyclo import Cyclogram
 from .button import Button
 
 class Bomb():
-    def __init__(self):
-        self.modules: List[Module] = []
-        self.modules.append(Button())
+    def __init__(self, Modules: List[Module] = []):
+        self.modules: List[Module] = Modules
 
     def view_bomb(self):
         module_list = "\n".join(

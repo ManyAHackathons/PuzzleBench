@@ -1,17 +1,47 @@
-from google import genai
-from .bomb import Module
 import base64
 import random
+from .module import Module
+
+PHRASES = [
+    "BOMB DEFUSAL",
+    "KEEP TALKING",
+    "NOBODY EXPLODES",
+    "TOP SECRET",
+    "DANGER ZONE",
+    "RED WIRE",
+]
+
 
 class Dec(Module):
-    #We can use a function called base64.decodebytes() to decode our base 64 string.
     def __init__(self):
         super().__init__()
-        self.file = "base64encoded.txt"
-        self.open = open(self.file, "rt")
-        self.word = file.readline(random.randint(1, 20))
-        self.decoded = base64.decodebytes(self.word.encode())
-    #for the more than 4 letters off thinggy we are going to need to make an array of the decoded
-    #word with different respective lenghts that are 75% in the range of the length of the word. 
-        self.length = len(self.decoded)
-    #I'm not sure how to do the part where I can make an array with lenghts that are 4 letters off or less. 
+        phrase = random.choice(PHRASES)
+        self.encoded = base64.b64encode(phrase.encode()).decode()
+        self.length = len(phrase)
+
+    def description(self) -> str:
+        return (
+            f"A DECODING module. You see an encoded string on the display: {self.encoded}\n"
+            f"Read this string exactly to your partner. Then wait for their instructions."
+        )
+
+    def manual(self) -> str:
+        return (
+            "DECODING MODULE MANUAL\n"
+            "The defuser will read you a Base64-encoded string.\n"
+            "1. Decode the Base64 string to find the original text.\n"
+            "2. Count the number of characters in the decoded result (including spaces).\n"
+            "3. Tell the defuser that exact character count.\n"
+            "4. The defuser will submit the number. It succeeds if within 4 of the true length."
+        )
+
+    def action(self, string: str) -> str:
+        try:
+            guess = int(string.strip())
+        except ValueError:
+            return "Error: submit a number representing the character length of the decoded string."
+
+        if abs(guess - self.length) <= 4:
+            self.defuse()
+            return f"Correct! The decoded string is {self.length} characters. Module defused!"
+        return f"Wrong length. Strike! (Your guess: {guess}, acceptable range: {self.length - 4}–{self.length + 4})"
