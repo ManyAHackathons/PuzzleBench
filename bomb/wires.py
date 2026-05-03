@@ -1,5 +1,5 @@
 import random
-from .module import Module
+from .bomb import Module
 
 SCENARIOS = [
     {
