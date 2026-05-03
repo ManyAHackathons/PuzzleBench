@@ -34,3 +34,6 @@ class Bomb():
         available = ", ".join(m.getName() for m in self.modules)
         return f"No module named '{module_name}' found. Active modules: {available}"
     
+    def defused(self) -> bool:
+        """Returns true if all modules are defused, false otherwise."""
+        return all(module.is_defused() for module in self.modules)
