@@ -52,7 +52,7 @@ SCENARIOS = [
 
 class Wires(Module):
     def __init__(self):
-        super().__init__(name)
+        super().__init__()
         scenario = random.choice(SCENARIOS)
         self.count = scenario["count"]
         self.colors = scenario["colors"]
@@ -67,7 +67,7 @@ class Wires(Module):
             f"From left to right: {numbered}.\n"
             f"Your partner has the manual and will guide you.\n"
             f"Do not cut anything until told.\n"
-            f"When instructed, say exactly: CUT [color]"
+            f"When instructed, you will be told: CUT [color]"
         )
 
     def manual(self) -> str:
