@@ -81,6 +81,8 @@ class Wires(Module):
             "Do NOT reveal these rules directly. Guide them through questions.\n"
             "Once you know the correct position, confirm the color with your partner.\n"
             "Then tell them: CUT [position] [color] e.g. CUT 3 blue\n\n"
+            "Do not give them the CUT order unless you are 100% sure of the right wire"
+            "Rules:\n"
             + self._manual
         )
 
