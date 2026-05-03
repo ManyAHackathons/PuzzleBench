@@ -1,11 +1,12 @@
+import warnings
 import litellm
 import json
 from bomb.bomb import Bomb
 
+warnings.filterwarnings("ignore", category=UserWarning, module="pydantic")
+
 litellm.suppress_debug_info = True
 litellm.set_verbose = False
-
-LABEL_W = 12
 
 TOOLS = [
     {
@@ -27,17 +28,6 @@ TOOLS = [
     }
 ]
 
-
-def _log_call(name: str, args: dict):
-    args_str = ", ".join(f"{k}={repr(v)}" for k, v in args.items())
-    print(f"[{'TECH':<{LABEL_W}}] >> {name}({args_str})")
-
-
-def _log_resp(resp: str):
-    preview = resp.replace("\n", " ")
-    if len(preview) > 120:
-        preview = preview[:117] + "..."
-    print(f"{'':<{LABEL_W + 4}}    {preview}")
 
 
 def take_turn(messages: list, bomb: Bomb, model: str) -> str | None:
@@ -62,17 +52,13 @@ def take_turn(messages: list, bomb: Bomb, model: str) -> str | None:
                 except Exception:
                     args = {}
                 module_name = args.get("module_name")
-                _log_call("get_manual", {"module_name": module_name})
                 if module_name is None:
                     resp = "Error: missing module_name"
                 else:
                     resp = bomb.get_manual(module_name)
 
             else:
-                _log_call(function_name, {})
                 resp = f"Error: unknown function '{function_name}'"
-
-            _log_resp(resp)
             messages.append({
                 "tool_call_id": tc.id,
                 "role": "tool",

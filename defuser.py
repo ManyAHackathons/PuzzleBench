@@ -1,11 +1,12 @@
+import warnings
 import litellm
 import json
 from bomb.bomb import Bomb
 
+warnings.filterwarnings("ignore", category=UserWarning, module="pydantic")
+
 litellm.suppress_debug_info = True
 litellm.set_verbose = False
-
-LABEL_W = 12
 
 TOOLS = [
     {
@@ -56,17 +57,6 @@ TOOLS = [
 ]
 
 
-def _log_call(name: str, args: dict):
-    args_str = ", ".join(f"{k}={repr(v)}" for k, v in args.items())
-    print(f"[{'DEFUSER':<{LABEL_W}}] >> {name}({args_str})")
-
-
-def _log_resp(resp: str):
-    preview = resp.replace("\n", " ")
-    if len(preview) > 120:
-        preview = preview[:117] + "..."
-    print(f"{'':<{LABEL_W + 4}}    {preview}")
-
 
 def take_turn(messages: list, bomb: Bomb, model: str) -> str | None:
     response = litellm.completion(
@@ -85,7 +75,6 @@ def take_turn(messages: list, bomb: Bomb, model: str) -> str | None:
             function_name = tc.function.name
 
             if function_name == "view_bomb":
-                _log_call("view_bomb", {})
                 resp = bomb.view_bomb()
 
             elif function_name == "view_module":
@@ -94,7 +83,6 @@ def take_turn(messages: list, bomb: Bomb, model: str) -> str | None:
                 except Exception:
                     args = {}
                 module_id = args.get("module_id")
-                _log_call("view_module", {"module_id": module_id})
                 if module_id is None:
                     resp = "Error: missing module_id"
                 else:
@@ -107,7 +95,6 @@ def take_turn(messages: list, bomb: Bomb, model: str) -> str | None:
                     args = {}
                 module_id = args.get("module_id")
                 action = args.get("action")
-                _log_call("action_module", {"module_id": module_id, "action": action})
                 if module_id is None:
                     resp = "Error: missing module_id"
                 elif action is None:
@@ -116,10 +103,7 @@ def take_turn(messages: list, bomb: Bomb, model: str) -> str | None:
                     resp = bomb.action_module(int(module_id), action)
 
             else:
-                _log_call(function_name, {})
                 resp = f"Error: unknown function '{function_name}'"
-
-            _log_resp(resp)
             messages.append({
                 "tool_call_id": tc.id,
                 "role": "tool",

@@ -10,10 +10,11 @@ from rich.align import Align
 console = Console()
 
 def print_panel(role, content):
+    text = content or ""
     if role == "defuser":
-        console.print(Panel(content, title="[bold red] DEFUSER[\bold red]", border_style="red"))
+        console.print(Panel(text, title="[bold red] DEFUSER[/bold red]", border_style="red"))
     else:
-        console.print(Panel(content, title="[bold blue] TECHNICIAN[\bold blue]", border_style="blue"))
+        console.print(Panel(text, title="[bold blue] TECHNICIAN[/bold blue]", border_style="blue"))
 
 def print_bomb(bomb):
     table = Table(title="BOMB", border_style="yellow", show_lines=True)
