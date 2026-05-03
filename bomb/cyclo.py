@@ -37,10 +37,11 @@ class Cyclogram(Module):
             "4. Feedback codes per letter: 2 = correct letter & position, "
             "1 = correct letter but wrong position, 0 = not in word.\n"
             "5. Use feedback to refine guesses. Module defuses on all 2s.\n"
+            "defuser uses 'rotate[n]' to change highlighted letter (n steps, default 1) and 'submit[guess]' to submit a guess.\n"
             f"Maximum {self.max_attempts} attempts."
         )
 
-    def action(self, cmd: str) -> str:
+    def action(self, string: str) -> str:
         """
         Modified to handle 'rotate [n]' or 'submit[guess]' in a single string
         to stay consistent with the base case.
@@ -48,7 +49,7 @@ class Cyclogram(Module):
         if self.defused:
             return "Module is already defused."
         
-        parts = cmd().lower().split()
+        parts = string.lower().split()
         if not parts:
             return "No command provided."
         
@@ -58,7 +59,7 @@ class Cyclogram(Module):
             try:
                 steps = int(parts[1]) if len(parts) > 1 else 1
                 self.current_index = (self.current_index + steps) % len(self.display_letters)
-                return f"Rotated {steps} step(s). Current letter: {self.current_letter()}"
+                return f"Rotated {steps} step(s). Current letter: {self.display_letters[self.current_index]}"
             except ValueError:
                 return "Error: Rotation steps must be a number."
 
