@@ -5,6 +5,7 @@ from rich import print as rprint
 from rich.table import Table
 from bomb.module import Module
 from bomb.bomb import Bomb
+from rich.align import Align
 
 console = Console()
 
@@ -12,10 +13,10 @@ def print_panel(role, content):
     if role == "defuser":
         console.print(Panel(content, title="[bold red] DEFUSER[\bold red]", border_style="red"))
     else:
-        console.print(Panel(content, title="[bold blue] TECHNICIAN[\bold blue]", border_style="bluie"))
+        console.print(Panel(content, title="[bold blue] TECHNICIAN[\bold blue]", border_style="blue"))
 
 def print_bomb(bomb):
-    table = Table(title="💣 BOMB", border_style="yellow", show_lines=True)
+    table = Table(title="BOMB", border_style="yellow", show_lines=True)
     table.add_column("ID", style="dim", width=4)
     table.add_column("Module", width=16)
     table.add_column("Status", width=10)
@@ -27,10 +28,11 @@ def print_bomb(bomb):
     console.print(table)
 
 def print_start():
-    console.print(Panel("[bold green]BOMB DEFUSAL INITIATED[/bold green]", border_style="green"))
+    centered_content = Align.center("[bold green]BOMB DEFUSAL INITIATED[/bold green]", vertical="middle")
+    console.print(Panel(centered_content, border_style="green"))
 
 def print_win():
-    console.print(Panel("[bold gold]BOMB DEFUSED! CONGRATULATIONS![/bold gold]", border_style="white"))
+    console.print(Align.center(Panel("[bold gold]BOMB DEFUSED! CONGRATULATIONS![/bold gold]", border_style="white")))
 
 def print_loss():
     console.print(Panel("[bold red]TIME RAN OUT! THE BOMB EXPLODED![/bold red]", border_style="red"))
