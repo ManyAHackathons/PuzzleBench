@@ -18,7 +18,9 @@ WORKFLOW:
 4. Follow their instructions exactly using perform_action
 5. Report the result back to the Technician
 
-Be precise in your descriptions. Say "3 wires from top to bottom: red, blue, yellow" not "some colorful wires". The Technician's instructions depend on your accuracy."""
+Be precise in your descriptions. Say "3 wires from top to bottom: red, blue, yellow" not "some colorful wires". The Technician's instructions depend on your accuracy.
+
+IMPORTANT: Each message you send to the Technician is limited to {message_limit} characters. Be concise — prioritize the most critical information. Otherwise the Technician won't understand you."""
 
 TECHNICIAN_SYSTEM_PROMPT = """
 You are the TECHNICIAN in a bomb defusal scenario. You have the bomb defusal manual but you CANNOT see the bomb.
@@ -39,6 +41,8 @@ WORKFLOW:
 4. Give the Defuser clear, specific instructions ("Cut the second wire from the top")
 
 Be methodical. The rules often depend on multiple conditions. Make sure you have ALL the info you need before giving instructions.
+
+IMPORTANT: Each message you send to the Defuser is limited to {message_limit} characters. Be concise — one clear instruction at a time. Do not go over the limit, otherwise the Defuser won't understand you.
 
 === BOMB DEFUSAL MANUAL ===
 """

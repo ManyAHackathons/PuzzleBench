@@ -1,13 +1,12 @@
 from typing import List
 from .module import Module
 from .wires import Wires
-from .cyclo import WordleCyclo
+from .cyclo import Cyclogram
 from .button import Button
 
 class Bomb():
-    def __init__(self):
-        self.modules: List[Module] = []
-        self.modules.append(Button())
+    def __init__(self, Modules: List[Module] = []):
+        self.modules: List[Module] = Modules
 
     def view_bomb(self):
         module_list = "\n".join(
@@ -18,7 +17,7 @@ class Bomb():
             f"Active modules:\n{module_list}"
         )
 
-    def action_module(self, module_id: int, string: str) -> None:
+    def action_module(self, module_id: int, string: str) -> str:
         """Perform an action on a module (cut a wire, press a button, etc...). Actions are represented as strings that are passed to the module's action function. Returns a result message. If the string that is entered is part of the module's solution flag, the module is defused."""
         return self.modules[module_id].action(string)
 

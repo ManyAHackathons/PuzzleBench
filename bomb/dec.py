@@ -1,37 +1,47 @@
-from .bomb import Module
 import base64
 import random
+from .module import Module
+
+PHRASES = [
+    "BOMB DEFUSAL",
+    "KEEP TALKING",
+    "NOBODY EXPLODES",
+    "TOP SECRET",
+    "DANGER ZONE",
+    "RED WIRE",
+]
+
 
 class Dec(Module):
-    #We can use a function called base64.decodebytes() to decode our base 64 string.
     def __init__(self):
         super().__init__()
-        with open("base64encrypted.txt", "r") as e, open("base64decrypted.txt", "w") as d:
-            self.all_enc = [line.strip() for line in e.line.strip()]
-            self.all_dec = [line.strip() for line in d.line.strip()]
+        phrase = random.choice(PHRASES)
+        self.encoded = base64.b64encode(phrase.encode()).decode()
+        self.length = len(phrase)
 
-        index = random.randint(0, len(self.all_enc) - 1)
-        self.target_encoded = self.all_enc[index]
-        self.correct_word = self.all_dec[index]
-        
-        self.buttons = self._generate_buttons()
-
-    def _generate_buttons(self):
-        buttons  = [w for w in self.all_dec if w != self.correct_word and abs(len(w) - len(self.correct_word)) <= 4 and w != self.correct_word]
-        selected = random.sample(buttons, min(len(buttons), 3)) + [self.correct_word]
-        random.shuffle(selected)
-        return selected
-    
     def description(self) -> str:
-        return f"Decoder Module: Display shows: {self.target_encoded}. Buttons available: {', '.join(self.buttons)}"
-    
+        return (
+            f"A DECODING module. You see an encoded string on the display: {self.encoded}\n"
+            f"Read this string exactly to your partner. Then wait for their instructions."
+        )
+
     def manual(self) -> str:
-        mapping = [f"{e} -> {d}" for e, d in zip(self.all_enc, self.all_dec)]
-        return "Decoder Manual:\n" + "\n".join(mapping)
-    
-    def action(self, choice: str) -> str:
-        if choice.strip().lower() == self.correct_word.lower():
+        return (
+            "DECODING MODULE MANUAL\n"
+            "The defuser will read you a Base64-encoded string.\n"
+            "1. Decode the Base64 string to find the original text.\n"
+            "2. Count the number of characters in the decoded result (including spaces).\n"
+            "3. Tell the defuser that exact character count.\n"
+            "4. The defuser will submit the number. It succeeds if within 4 of the true length."
+        )
+
+    def action(self, string: str) -> str:
+        try:
+            guess = int(string.strip())
+        except ValueError:
+            return "Error: submit a number representing the character length of the decoded string."
+
+        if abs(guess - self.length) <= 4:
             self.defuse()
-            return "Correct! Module defused."
-        return "Incorrect. Strike Recorded."
-        
+            return f"Correct! The decoded string is {self.length} characters. Module defused!"
+        return f"Wrong length. Strike! (Your guess: {guess}, acceptable range: {self.length - 4}–{self.length + 4})"

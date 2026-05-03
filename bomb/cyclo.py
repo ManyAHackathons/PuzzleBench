@@ -1,14 +1,17 @@
 import random
 import string
 from typing import List, Optional
-from .bomb import Module
+from .module import Module
 
-class WordleCyclo(Module):
+
+class Cyclogram(Module):
     def __init__(self):
         super().__init__()
-      
+
         self.target_string = "".join(random.choices(string.ascii_uppercase, k=5))
-        self.display_letters = list(self.target_string)
+        # 6 letters shown to defuser: the 5 target letters plus one random extra
+        extra = random.choice(string.ascii_uppercase)
+        self.display_letters = list(self.target_string) + [extra]
         random.shuffle(self.display_letters)
 
         self.current_index = 0
@@ -16,23 +19,26 @@ class WordleCyclo(Module):
         self.max_attempts = 6
 
     def description(self) -> str:
-        """What the Defuser sees to describe the module."""
-        return (f"A WordleCyclo module with 5 rotating positions. "
-                f"The letter currently visible is: '{self.current_letter()}'")
-
-    def manual(self) -> str:
-        """The instructions the Expert model must follow."""
+        all_letters = ", ".join(self.display_letters)
+        current = self.display_letters[self.current_index]
         return (
-            "WORDLE CYCLOGRAM MANUAL\n"
-            "1. The module cycles through 5 random letters.\n"
-            "2. Identify all 5 letters by instructing the defuser to 'rotate'.\n"
-            "3. Submit a 5-letter guess to receive feedback.\n"
-            "4. Feedback codes: 2 = Correct letter & position, 1 = Correct letter but wrong position, 0 = Absent.\n"
-            "5. The module is defused when you receive all 2s (Green)."
+            f"A Cyclogram module. There are 6 letters available: {all_letters}. "
+            f"The currently highlighted letter is: '{current}'. "
+            f"You can 'rotate' to cycle the highlight, or submit a 5-letter guess."
         )
 
-    def current_letter(self) -> str:
-        return self.display_letters[self.current_index]
+    def manual(self) -> str:
+        return (
+            "WORDLE CYCLOGRAM MANUAL\n"
+            "The defuser sees 6 letters and must find the hidden 5-letter word.\n"
+            "1. Ask the defuser to read all 6 letters to you.\n"
+            "2. Determine a valid 5-letter word using only those letters.\n"
+            "3. Tell the defuser to submit your word guess.\n"
+            "4. Feedback codes per letter: 2 = correct letter & position, "
+            "1 = correct letter but wrong position, 0 = not in word.\n"
+            "5. Use feedback to refine guesses. Module defuses on all 2s.\n"
+            f"Maximum {self.max_attempts} attempts."
+        )
 
     def action(self, cmd: str) -> str:
         """
@@ -73,11 +79,10 @@ class WordleCyclo(Module):
         return "Unknown command. Use 'rotate[n]' or 'submit[n]'."
 
     def _submit_guess(self, guess: str) -> List[int]:
-        """Internal logic for Wordle feedback."""
         guess = guess.upper()
         self.attempts += 1
         feedback = [0] * 5
-        
+
         target_list: List[Optional[str]] = list(self.target_string)
         guess_list: List[Optional[str]] = list(guess)
 
@@ -94,5 +99,5 @@ class WordleCyclo(Module):
 
         if feedback == [2, 2, 2, 2, 2]:
             self.defuse()
-        
+
         return feedback

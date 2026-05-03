@@ -82,10 +82,14 @@ class Wires(Module):
             + self._manual
         )
 
-    def action(self, color: str) -> None:
+    def action(self, color: str) -> str:
         color = color.lower()
+        
         if color not in self.colors:
-            return None
+            return f"There is no {color} wire. Try again."
+        
         if color != self.cut_color:
-            return None
+            return f"You cut the {color} wire. WRONG wire — the bomb sparked. Try again."
+        
         self.defuse()
+        return f"You cut the {color} wire. Correct! WIRES MODULE DEFUSED."
