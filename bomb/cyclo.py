@@ -34,32 +34,43 @@ class WordleCyclo(Module):
     def current_letter(self) -> str:
         return self.display_letters[self.current_index]
 
-    def action(self, cmd: str, guess: Optional[str] = None) -> str:
+    def action(self, cmd: str) -> str:
         """
-        Implementation of the abstract action method.
-        Commands: 'rotate' or 'submit'
+        Modified to handle 'rotate [n]' or 'submit[guess]' in a single string
+        to stay consistent with the base case.
         """
         if self.defused:
             return "Module is already defused."
+        
+        parts = cmd().lower().split()
+        if not parts:
+            return "No command provided."
+        
+        cmd = parts[0]
 
-        if cmd.lower() == "rotate":
-            self.current_index = (self.current_index + 1) % len(self.display_letters)
-            return f"Rotated. Current letter: {self.current_letter()}"
+        if cmd == "rotate":
+            try:
+                steps = int(parts[1]) if len(parts) > 1 else 1
+                self.current_index = (self.current_index + steps) % len(self.display_letters)
+                return f"Rotated {steps} step(s). Current letter: {self.current_letter()}"
+            except ValueError:
+                return "Error: Rotation steps must be a number."
 
-        elif cmd.lower() == "submit":
-            if not guess or len(guess) != 5:
-                return "Error: Guess must be exactly 5 letters."
+        elif cmd == "submit":
+
+            if len(parts) < 2 or len(parts[1]) != 5:
+                return "Error: Guess must be a 5-letter word."
             
+            guess = parts[1].upper()
             feedback = self._submit_guess(guess)
+            
             if self.defused:
                 return f"Feedback: {feedback}. MODULE DEFUSED!"
             
             if self.attempts >= self.max_attempts:
                 return f"Feedback: {feedback}. STRIKE: Maximum attempts reached."
-            
-            return f"Feedback: {feedback}. Attempts left: {self.max_attempts - self.attempts}"
 
-        return "Unknown command. Use 'rotate' or 'submit'."
+        return "Unknown command. Use 'rotate[n]' or 'submit[n]'."
 
     def _submit_guess(self, guess: str) -> List[int]:
         """Internal logic for Wordle feedback."""
