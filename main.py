@@ -1,47 +1,33 @@
+from bench import TURNS
 from bomb.bomb import Bomb
-from harness import take_turn
+import defuser as defuser_harness
+import technician as technician_harness
 import prompts
 
-MESSAGE_LENGTH_LIMIT = 250
+DEFUSER_MODEL = "openai/gpt-4o"
+TECHNICIAN_MODEL = "openai/gpt-4o"
 
 def main():
     """Bootstrapping project"""
-    bomb = Bomb()
+    bomb = Bomb() # https://developers.openai.com/api/docs/guides/function-calling
+    
+    defuser_messages = [{ "role": "system", "content": prompts.DEFUSER_SYSTEM_PROMPT}]
+    tech_messages = [{ "role": "system", "content": prompts.TECHNICIAN_SYSTEM_PROMPT + "\n\n" + prompts.MANUAL }]
 
-    defuser_system = prompts.DEFUSER_SYSTEM_PROMPT
-    technician_system = prompts.TECHNICIAN_SYSTEM_PROMPT + "\n\n" + prompts.MANUAL
-    
-    defuser_messages = []
-    tech_messages = []
+    for i in range(TURNS):
+        walkie = defuser_harness.take_turn(defuser_messages, bomb, DEFUSER_MODEL)
+        print(f"\nDefuser says: {walkie}\n")
+        tech_messages.append({"role": "user", "content": walkie})
 
-    turn_count = 0
-    max_turns = 30
-    
-    def tell_technician(message: str) -> str:
-        """Send a message to the technician describing what you see on the bomb."""
-        tech_messages.append(f"Defuser says: {message[:MESSAGE_LENGTH_LIMIT]}")
-        return "Message received by technician."
+        # check and see if bomb is completly defused
+        if bomb.defused():
+            print("Bomb defused! Congratulations!")
+            return
 
-    def tell_defuser(message: str) -> str:
-        """Send instructions to the defuser about what action to take on the bomb."""
-        defuser_messages.append(f"Technician says: {message[:MESSAGE_LENGTH_LIMIT]}")
-        return "Message received by defuser."
-    
-    while turn_count < max_turns:
-        # defuser turn
-        result = take_turn(defuser_messages + [defuser_system], [bomb.look_at_bomb, tell_technician])
-        defuser_messages.append(result)
-        print(f"Defuser: {result}")
-        # technician turn
-        result = take_turn(tech_messages + [technician_system], [tell_defuser])
-        tech_messages.append(result)
-        print(f"Technician: {result}")
-
-        if bomb.modules and bomb.modules[0].is_defused():
-            print("Bomb defused! Technician wins!")
-            break
-    
-    
+        walkie = technician_harness.take_turn(tech_messages, bomb, TECHNICIAN_MODEL)
+        print(f"\nTechnician says: {walkie}\n")
+        defuser_messages.append({"role": "user", "content": walkie})
+        
 
 
 if (__name__ == "__main__"):

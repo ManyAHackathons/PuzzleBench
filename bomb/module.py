@@ -16,9 +16,12 @@ class Module(ABC):
         pass
 
     @abstractmethod
-    def action(self, *args, **kwargs) -> None:
-        """Performs an action on the module. Returns a result message."""
+    def action(self, string: str) -> str:
+        """Performs an action on the module. Returns a result message. The string that is entered is part of the module's solution flag. If the correct string is entered, the module is defused."""
         pass
+
+    def getName(self) -> str:
+        return self.__class__.__name__
 
     def is_defused(self) -> bool:
         return self.defused
