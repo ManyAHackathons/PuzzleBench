@@ -20,8 +20,21 @@ def print_bomb(bomb):
     table.add_column("Module", width=16)
     table.add_column("Status", width=10)
 
-    for i, module in enumerate(bomb.getModules()):
+    for i, module in enumerate(bomb.get_modules()):
         status = "[green]DEFUSED ✓[/green]" if module.is_defused() else "[red]ACTIVE ●[/red]"
         table.add_row(str(i), module.getName(), status)
 
     console.print(table)
+
+def print_start():
+    console.print(Panel("[bold green]BOMB DEFUSAL INITIATED[/bold green]", border_style="green"))
+
+def print_win():
+    console.print(Panel("[bold gold]BOMB DEFUSED! CONGRATULATIONS![/bold gold]", border_style="white"))
+
+def print_loss():
+    console.print(Panel("[bold red]TIME RAN OUT! THE BOMB EXPLODED![/bold red]", border_style="red"))
+
+def print_turn(n: int):
+    console.rule(f"[dim]Turn {n}[/dim]")
+

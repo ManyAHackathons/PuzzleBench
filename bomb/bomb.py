@@ -18,7 +18,7 @@ class Bomb():
             f"Active modules:\n{module_list}"
         )
 
-    def action_module(self, module_id: int, string: str) -> None:
+    def action_module(self, module_id: int, string: str) -> str:
         """Perform an action on a module (cut a wire, press a button, etc...). Actions are represented as strings that are passed to the module's action function. Returns a result message. If the string that is entered is part of the module's solution flag, the module is defused."""
         return self.modules[module_id].action(string)
 
