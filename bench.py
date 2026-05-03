@@ -14,11 +14,11 @@ TURNS = 10
 RUNS_PER_PAIRING = 3
 
 MODEL_PAIRINGS = [
+    ("openrouter/google/gemma-4-26b-a4b-it:free",              "openrouter/google/gemma-4-26b-a4b-it:free"),
     ("openrouter/nvidia/nemotron-3-super-120b-a12b:free",      "openrouter/nvidia/nemotron-3-super-120b-a12b:free"),
     ("openrouter/nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free", "openrouter/nvidia/nemotron-3-super-120b-a12b:free"),
     ("openrouter/nvidia/nemotron-3-super-120b-a12b:free",      "openrouter/nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"),
     ("openrouter/openai/gpt-oss-120b:free",                      "openrouter/openai/gpt-oss-120b:free"),
-    ("openrouter/google/gemma-4-26b-a4b-it:free",              "openrouter/google/gemma-4-26b-a4b-it:free"),
 ]
 
 # ── Tracing ──────────────────────────────────────────────────────────────────
@@ -65,12 +65,12 @@ def bench():
                     span.set_attribute("run_index", run_idx)
                     span.set_attribute("turns_limit", TURNS)
 
-                    result = run_game(defuser_model, technician_model, TURNS, message_limit, modules)
+                    result = run_game(defuser_model, technician_model, TURNS, message_limit, modules, 10)
 
                     span.set_attribute("defused", result["defused"])
                     span.set_attribute("turns_taken", result["turns_taken"])
             else:
-                result = run_game(defuser_model, technician_model, TURNS, message_limit, modules)
+                result = run_game(defuser_model, technician_model, TURNS, message_limit, modules, 10)
 
             pairing_results.append({
                 "run": run_idx + 1,
