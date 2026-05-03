@@ -7,6 +7,7 @@ from bomb.button import Button
 from bomb.cyclo import Cyclogram
 from bomb.wires import Wires
 from bomb.dec import Dec
+from teminal_ui import print_bomb, print_start, print_win, print_loss, print_turn, print_panel
 
 DEFUSER_MODEL = "openrouter/openai/gpt-oss-120b:free"
 TECHNICIAN_MODEL = "openrouter/nvidia/nemotron-3-super-120b-a12b:free"
@@ -32,39 +33,40 @@ def run_game(defuser_model: str, technician_model: str, turns: int, message_limi
     defuser_messages = [{"role": "system", "content": prompts.DEFUSER_SYSTEM_PROMPT.format(message_limit=limit_str)}]
     tech_messages = [{"role": "system", "content": prompts.TECHNICIAN_SYSTEM_PROMPT.format(message_limit=limit_str) + "\n\n" + prompts.MANUAL}]
 
+    print_start()
+    print_bomb(bomb)
+
+    prev_defused = 0
     turns_taken = 0
     for i in range(turns):
         turns_taken += 1
 
-        print(f"\n{'─'*60}")
-        print(f"  TURN {i+1}  —  DEFUSER")
-        print(f"{'─'*60}")
+        print_turn(i + 1)
         walkie = _truncate(defuser_harness.take_turn(defuser_messages, bomb, defuser_model))
-        print(f"\n  DEFUSER: {walkie}\n")
+        print_panel("defuser", walkie)
         tech_messages.append({"role": "user", "content": walkie})
 
         if bomb.defused():
-            print(f"\n{'='*60}")
-            print(f"  BOMB DEFUSED in {turns_taken} turn(s)!")
-            print(f"{'='*60}\n")
+            print_win()
             return {"defused": True, "turns_taken": turns_taken, "defuser_messages": defuser_messages, "tech_messages": tech_messages}
 
         if turn_delay:
             time.sleep(turn_delay)
 
-        print(f"\n{'─'*60}")
-        print(f"  TURN {i+1}  —  TECHNICIAN")
-        print(f"{'─'*60}")
         walkie = _truncate(technician_harness.take_turn(tech_messages, bomb, technician_model))
-        print(f"\n  TECHNICIAN: {walkie}\n")
+        print_panel("technician", walkie)
+        tech_messages.append({"role": "user", "content": walkie})
         defuser_messages.append({"role": "user", "content": walkie})
+
+        curr_defused = sum(1 for m in bomb.modules if m.is_defused())
+        if curr_defused > prev_defused:
+            print_bomb(bomb)
+            prev_defused = curr_defused
 
         if turn_delay:
             time.sleep(turn_delay)
 
-    print(f"\n{'='*60}")
-    print(f"  FAILED — bomb not defused after {turns_taken} turn(s).")
-    print(f"{'='*60}\n")
+    print_loss()
     return {"defused": False, "turns_taken": turns_taken, "defuser_messages": defuser_messages, "tech_messages": tech_messages}
 
 
