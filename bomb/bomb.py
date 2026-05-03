@@ -25,6 +25,10 @@ class Bomb():
     def view_module(self, module_id: int) -> str:
         """Look at a module and get its description"""
         return self.modules[module_id].description()
+    
+    def get_modules(self) -> List[Module]:
+        """Returns the list of modules on the bomb."""
+        return self.modules
 
     def get_manual(self, module_name: str) -> str:
         """Return the manual for the first module whose name matches module_name (case-insensitive)."""
